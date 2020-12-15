@@ -83,6 +83,39 @@ public class SungJukService extends SungJukGenericService{
                 break;
         }
     }
+
+    @Override
+    public void readSungJuk() {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "select * from SungJuk";
+
+        conn=makeConn();
+        StringBuilder sb = new StringBuilder();
+        String fmt= "이름 :%s 국어점수 :%s 영어점수 :%s 수학점수 :%s 총점 :%s 평균 :%s 등급 :%s\n";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            rs= pstmt.executeQuery();
+            while(rs.next()){
+                String name=rs.getString(1);
+                String kor=rs.getString(2);
+                String eng=rs.getString(3);
+                String math=rs.getString(4);
+                String sum=rs.getString(5);
+                String mean=rs.getString(6);
+                String grd=rs.getString(7);
+                String result = String.format(fmt,name,kor,eng,math,sum,mean,grd);
+                sb.append(result);
+            }
+        } catch (SQLException throwables) {
+            System.out.println("DB접속실패");
+        }
+        destroyConn(conn,pstmt,rs);
+
+        System.out.println(sb.toString());
+    }
+
     public static  Connection makeConn(){
         String DRV = "org.mariadb.jdbc.Driver";
         String URL = "jdbc:mariadb://mariadb.cw2h1nljbpsk.ap-northeast-2.rds.amazonaws.com:3306/playground";
